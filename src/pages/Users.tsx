@@ -1,7 +1,7 @@
-import { useUsers } from "../queries/getUsers";
+import { useUsers } from "../queries/useUsers";
 
 const Users = () => {
-  const { data, isLoading, isError } = useUsers();
+  const { data: users, isLoading, isError } = useUsers();
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -12,9 +12,9 @@ const Users = () => {
   return (
     <div>
       <h1>User List</h1>
-      {data && data.length > 0 ? (
+      {users && users.length > 0 ? (
         <ul>
-          {data.map((user: any) => (
+          {users.map((user) => (
             <li key={user.id}>
               {user.name} - {user.email}
             </li>

@@ -21,7 +21,7 @@ export interface User {
   email: string;
   avatarUrl: string;
   title: string;
-  joinedAt: string; // ISO date
+  since: string; 
   project: Project;
   documents: Document[];
   status: UserStatus;
