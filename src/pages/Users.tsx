@@ -1,3 +1,4 @@
+import ManagementTable from "../components/ManagementTable";
 import { useUsers } from "../queries/useUsers";
 
 const Users = () => {
@@ -13,13 +14,7 @@ const Users = () => {
     <div>
       <h1>User List</h1>
       {users && users.length > 0 ? (
-        <ul>
-          {users.map((user) => (
-            <li key={user.id}>
-              {user.name} - {user.email}
-            </li>
-          ))}
-        </ul>
+        <ManagementTable users={users} />
       ) : (
         <p>No users found.</p>
       )}

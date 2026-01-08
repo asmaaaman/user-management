@@ -554,6 +554,13 @@
   resolved "https://registry.yarnpkg.com/@mui/core-downloads-tracker/-/core-downloads-tracker-7.3.7.tgz#99d9c60be3ce5632ec915b2c287682020ce19a99"
   integrity sha512-8jWwS6FweMkpyRkrJooamUGe1CQfO1yJ+lM43IyUJbrhHW/ObES+6ry4vfGi8EKaldHL3t3BG1bcLcERuJPcjg==
 
+"@mui/icons-material@^7.3.7":
+  version "7.3.7"
+  resolved "https://registry.yarnpkg.com/@mui/icons-material/-/icons-material-7.3.7.tgz#01a6019c552e27c7f8a3451bcb47171ede8b34ac"
+  integrity sha512-3Q+ulAqG+A1+R4ebgoIs7AccaJhIGy+Xi/9OnvX376jQ6wcy+rz4geDGrxQxCGzdjOQr4Z3NgyFSZCz4T999lA==
+  dependencies:
+    "@babel/runtime" "^7.28.4"
+
 "@mui/material@^7.3.7":
   version "7.3.7"
   resolved "https://registry.yarnpkg.com/@mui/material/-/material-7.3.7.tgz#50fc9b9f8645a4d26a48d7c5f7fa0c9876a8c679"
@@ -614,7 +621,7 @@
   dependencies:
     "@babel/runtime" "^7.28.4"
 
-"@mui/utils@^7.3.7":
+"@mui/utils@^7.3.5", "@mui/utils@^7.3.7":
   version "7.3.7"
   resolved "https://registry.yarnpkg.com/@mui/utils/-/utils-7.3.7.tgz#71443559a7fbd993b5b90fcb843fa26a60046f99"
   integrity sha512-+YjnjMRnyeTkWnspzoxRdiSOgkrcpTikhNPoxOZW0APXx+urHtUoXJ9lbtCZRCA5a4dg5gSbd19alL1DvRs5fg==
@@ -625,6 +632,38 @@
     clsx "^2.1.1"
     prop-types "^15.8.1"
     react-is "^19.2.3"
+
+"@mui/x-data-grid@^8.24.0":
+  version "8.24.0"
+  resolved "https://registry.yarnpkg.com/@mui/x-data-grid/-/x-data-grid-8.24.0.tgz#adff07364615671036fffb051d6f6f81caeb77b8"
+  integrity sha512-OCTrskRlxwJZ+vYWbgQnQPXWNMA/nY/RIkoESjbCG38N9fJicVCdyjszjcQn9V1NQH4fwkMlIN+DVU6zzbqJxQ==
+  dependencies:
+    "@babel/runtime" "^7.28.4"
+    "@mui/utils" "^7.3.5"
+    "@mui/x-internals" "8.24.0"
+    "@mui/x-virtualizer" "0.3.1"
+    clsx "^2.1.1"
+    prop-types "^15.8.1"
+    use-sync-external-store "^1.6.0"
+
+"@mui/x-internals@8.24.0":
+  version "8.24.0"
+  resolved "https://registry.yarnpkg.com/@mui/x-internals/-/x-internals-8.24.0.tgz#99f8c61f82ab7075135cc0b7ec41fbc053ac3cbe"
+  integrity sha512-tHPk8eUcuwvhNsAc4zcia8y+issjC+bLGssrQQSdLLeLIf9ewFbcwAURNTSnNhreyj/4RJOemVrSxKXpjkdVvQ==
+  dependencies:
+    "@babel/runtime" "^7.28.4"
+    "@mui/utils" "^7.3.5"
+    reselect "^5.1.1"
+    use-sync-external-store "^1.6.0"
+
+"@mui/x-virtualizer@0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@mui/x-virtualizer/-/x-virtualizer-0.3.1.tgz#d0733e15f307fb8acf311ebba471583eb19f7513"
+  integrity sha512-MhQ7U/zmSofBxeCRMiolhZWJ80RUJMFFMRqeehJu5GqscnudiVcplZb0eNsAkz9IjnJTyrjyLS0PY+kn78enOw==
+  dependencies:
+    "@babel/runtime" "^7.28.4"
+    "@mui/utils" "^7.3.5"
+    "@mui/x-internals" "8.24.0"
 
 "@napi-rs/wasm-runtime@^1.1.0":
   version "1.1.1"
@@ -2520,6 +2559,11 @@ regexparam@^2.0.2:
   resolved "https://registry.yarnpkg.com/regexparam/-/regexparam-2.0.2.tgz#a0f6aa057c67b1c9c09508c45823c0755b1f6e58"
   integrity sha512-A1PeDEYMrkLrfyOwv2jwihXbo9qxdGD3atBYQA9JJgreAx8/7rC6IUkWOw2NQlOxLp2wL0ifQbh1HuidDfYA6w==
 
+reselect@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/reselect/-/reselect-5.1.1.tgz#c766b1eb5d558291e5e550298adb0becc24bb72e"
+  integrity sha512-K/BG6eIky/SBpzfHZv/dd+9JBFiS4SWV7FIujVyJRux6e45+73RaUHXLmIR1f7WOMaQ0U1km6qwklRQxpJJY0w==
+
 resolve-from@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/resolve-from/-/resolve-from-4.0.0.tgz#4abcd852ad32dd7baabfe9b40e00a36db5f392e6"
@@ -2729,6 +2773,11 @@ uri-js@^4.2.2:
   integrity sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==
   dependencies:
     punycode "^2.1.0"
+
+use-sync-external-store@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.6.0.tgz#b174bfa65cb2b526732d9f2ac0a408027876f32d"
+  integrity sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==
 
 vite@^7.2.4:
   version "7.3.1"
