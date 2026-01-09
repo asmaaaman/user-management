@@ -11,14 +11,13 @@ const Users = () => {
   }
 
   return (
-    <div>
-      <h1>User List</h1>
+    <>
       {users && users.length > 0 ? (
         <ManagementTable users={users} />
       ) : (
         <p>No users found.</p>
       )}
-    </div>
+    </>
   );
 };
 

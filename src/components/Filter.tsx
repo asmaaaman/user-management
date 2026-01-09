@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 
 type FilterValue = "all" | "active" | "absent";
 
@@ -19,18 +19,37 @@ const Filter = ({ value, onChange }: Props) => {
     }`;
 
   return (
-    <Box className="mb-4 p-2 bg-[#F7F7F7] rounded-lg w-[35%] flex flex-row gap-2 items-center">
-      <button className={tabClass("all")} onClick={() => onChange("all")}>
-        All
-      </button>
+    <Box className="flex align-items-center justify-between">
+      <Box className="mb-4 p-2 bg-[#F7F7F7] rounded-lg w-[35%] flex flex-row gap-2 items-center">
+        <button className={tabClass("all")} onClick={() => onChange("all")}>
+          All
+        </button>
 
-      <button className={tabClass("active")} onClick={() => onChange("active")}>
-        Active
-      </button>
+        <button
+          className={tabClass("active")}
+          onClick={() => onChange("active")}
+        >
+          Active
+        </button>
 
-      <button className={tabClass("absent")} onClick={() => onChange("absent")}>
-        Absent
-      </button>
+        <button
+          className={tabClass("absent")}
+          onClick={() => onChange("absent")}
+        >
+          Absent
+        </button>
+      </Box>
+      <Box>
+        <Button
+          size="large"
+          sx={{
+            backgroundColor: "#F7F7F7",
+            color: "#ddd",
+          }}
+        >
+          Delete Selected
+        </Button>
+      </Box>
     </Box>
   );
 };
