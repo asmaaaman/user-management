@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import {
   Dialog,
   DialogTitle,
@@ -44,7 +44,6 @@ export default function EditUserDialog({ open, userId, onClose }: Props) {
     status: "active",
   });
 
-  // Fill form when data arrives
   React.useEffect(() => {
     if (!userQuery.data) return;
     const user = userQuery.data as User;

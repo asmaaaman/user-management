@@ -1,4 +1,5 @@
-export type UserStatus = "active" | "inactive" | "pending";
+export type UserStatus = "active" | "absent";
+
 
 export interface Project {
   name: string;

@@ -1,8 +1,8 @@
 {
   "users": [
     {
-      "id": "1",
-      "name": "Arthur Taylor",
+      "id": "2",
+      "name": "Arthur Tayloree",
       "email": "arthur@alignui.com",
       "avatarUrl": "https://i.pravatar.cc/120?img=22",
       "title": "Entrepreneur / CEO",
@@ -15,34 +15,13 @@
       "documents": [
         {
           "id": 103,
+          "iconUrl": "https://cdn-icons-png.flaticon.com/512/337/337946.png",
           "name": "taylor-arthur.pdf",
           "sizeMB": 2.4,
           "type": "pdf"
         }
       ],
       "status": "active"
-    },
-    {
-      "id": "2",
-      "name": "Arthur Taylor",
-      "email": "arthur@alignui.com",
-      "avatarUrl": "https://i.pravatar.cc/120?img=22",
-      "title": "Entrepreneur / CEO",
-      "since": "2021-08-01",
-      "project": {
-        "name": "Spotify",
-        "logoUrl": "https://logo.clearbit.com/spotify.com",
-        "subtitle": "Vision and Goal Setting Session"
-      },
-      "documents": [
-        {
-          "id": 103,
-          "name": "taylor-arthur.pdf",
-          "sizeMB": 2.4,
-          "type": "pdf"
-        }
-      ],
-      "status": "absent"
     },
     {
       "id": "3",
@@ -59,12 +38,13 @@
       "documents": [
         {
           "id": 103,
+          "iconUrl": "https://cdn-icons-png.flaticon.com/512/337/337946.png",
           "name": "taylor-arthur.pdf",
           "sizeMB": 2.4,
           "type": "pdf"
         }
       ],
-      "status": "absent"
+      "status": "active"
     },
     {
       "id": "4",
@@ -87,7 +67,7 @@
           "type": "pdf"
         }
       ],
-      "status": "active"
+      "status": "absent"
     },
     {
       "id": "5",
@@ -104,6 +84,7 @@
       "documents": [
         {
           "id": 105,
+          "iconUrl": "https://cdn-icons-png.flaticon.com/512/337/337946.png",
           "name": "johnson-matthew.pdf",
           "sizeMB": 2.9,
           "type": "pdf"
@@ -126,6 +107,7 @@
       "documents": [
         {
           "id": 106,
+          "iconUrl": "https://cdn-icons-png.flaticon.com/512/337/337946.png",
           "name": "perez-laura.pdf",
           "sizeMB": 2.5,
           "type": "pdf"
@@ -148,6 +130,7 @@
       "documents": [
         {
           "id": 107,
+          "iconUrl": "https://cdn-icons-png.flaticon.com/512/337/337946.png",
           "name": "chen-wei.pdf",
           "sizeMB": 2.6,
           "type": "pdf"

@@ -9,7 +9,6 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import type { User } from "../types/users";
 import {
-  Alert,
   Box,
   CircularProgress,
   Container,
@@ -24,20 +23,49 @@ import DoNotDisturbAltIcon from "@mui/icons-material/DoNotDisturbAlt";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Filter from "./Filter";
-import { useState } from "react";
 import CustomCheckbox from "./CheckBox";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  deleteMultipleUsers,
-  deleteUserById,
-  getUserById,
-  updateUserStatus,
-} from "../apis/users";
 import ConfirmDeleteDialog from "./ConfrimModal";
 import EditUserDialog from "../pages/users/EditUser";
 
+type FilterValue = "all" | "active" | "absent";
+
 type Props = {
-  users: User[];
+  rows: User[];
+
+  filter: FilterValue;
+  onFilterChange: (v: FilterValue) => void;
+
+  selectedRows: Array<string | number>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onRowSelectionModelChange: (model: any) => void;
+
+  onBulkDeleteClick: () => void;
+  isDeleting: boolean;
+
+  actionsOpen: boolean;
+  actionsAnchorEl: HTMLElement | null;
+  onOpenActions: (
+    e: React.MouseEvent<HTMLElement>,
+    id: string | number
+  ) => void;
+  onCloseActions: () => void;
+
+  currentUser?: User;
+  userDetailsLoading: boolean;
+
+  confirmOpen: boolean;
+  onCloseConfirm: () => void;
+  onConfirmDelete: () => void;
+
+  editOpen: boolean;
+  editUserId: string | number | null;
+  onOpenEdit: (id: string | number) => void;
+  onCloseEdit: () => void;
+
+  onOpenSingleDeleteConfirm: (id: string | number) => void;
+
+  onToggleStatus: () => void;
+  togglingStatus: boolean;
 };
 
 const SortIcons = ({ direction }: { direction?: "asc" | "desc" }) => (
@@ -52,22 +80,41 @@ const SortIcons = ({ direction }: { direction?: "asc" | "desc" }) => (
     }}
   >
     <KeyboardArrowUpIcon
-      sx={{
-        fontSize: 14,
-        opacity: direction === "asc" ? 1 : 0.35,
-      }}
+      sx={{ fontSize: 14, opacity: direction === "asc" ? 1 : 0.35 }}
     />
     <KeyboardArrowDownIcon
-      sx={{
-        fontSize: 14,
-        mt: -0.6,
-        opacity: direction === "desc" ? 1 : 0.35,
-      }}
+      sx={{ fontSize: 14, mt: -0.6, opacity: direction === "desc" ? 1 : 0.35 }}
     />
   </Box>
 );
 
-export default function ManagementTable({ users }: Props) {
+export default function ManagementTable({
+  rows,
+  filter,
+  onFilterChange,
+  selectedRows,
+  onRowSelectionModelChange,
+  onBulkDeleteClick,
+  isDeleting,
+  actionsOpen,
+  actionsAnchorEl,
+  onOpenActions,
+  onCloseActions,
+  currentUser,
+  userDetailsLoading,
+  confirmOpen,
+  onCloseConfirm,
+  onConfirmDelete,
+  editOpen,
+  editUserId,
+  onOpenEdit,
+  onCloseEdit,
+  onOpenSingleDeleteConfirm,
+  onToggleStatus,
+  togglingStatus,
+}: Props) {
+  const selectedCount = selectedRows.length;
+
   const columns: GridColDef<User>[] = [
     {
       field: "name",
@@ -115,7 +162,6 @@ export default function ManagementTable({ users }: Props) {
       headerName: "Project",
       flex: 1,
       minWidth: 180,
-
       valueGetter: (_, row) => row.project?.name ?? "",
       renderHeader: (params) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -144,19 +190,12 @@ export default function ManagementTable({ users }: Props) {
         </Box>
       ),
     },
-
     {
       field: "documents",
       headerName: "Member Documents",
       flex: 1.1,
       minWidth: 280,
       sortable: false,
-      renderHeader: (params) => (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <span>{params.colDef.headerName}</span>
-          <SortIcons direction={params.colDef.sortingOrder?.[0] ?? undefined} />
-        </Box>
-      ),
       renderCell: (params) => {
         const doc = params.row.documents?.[0];
         if (!doc) return <Box sx={{ color: "#9ca3af" }}>—</Box>;
@@ -179,7 +218,6 @@ export default function ManagementTable({ users }: Props) {
                 backgroundColor: "#fff",
                 display: "grid",
                 placeItems: "center",
-                position: "relative",
                 flex: "0 0 auto",
               }}
             >
@@ -223,15 +261,9 @@ export default function ManagementTable({ users }: Props) {
       field: "status",
       headerName: "Status",
       minWidth: 140,
-      renderHeader: (params) => (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <span>{params.colDef.headerName}</span>
-          <SortIcons direction={params.colDef.sortingOrder?.[0] ?? undefined} />
-        </Box>
-      ),
+      sortable: false,
       renderCell: ({ value }) => {
         const isActive = value === "active";
-
         return (
           <Box
             sx={{
@@ -254,7 +286,6 @@ export default function ManagementTable({ users }: Props) {
             ) : (
               <DoNotDisturbAltIcon sx={{ fontSize: 16, color: "#9ca3af" }} />
             )}
-
             {isActive ? "Active" : "Absent"}
           </Box>
         );
@@ -271,7 +302,7 @@ export default function ManagementTable({ users }: Props) {
       renderCell: (params) => (
         <IconButton
           size="small"
-          onClick={(e) => handleOpenActions(e, params.row.id)}
+          onClick={(e) => onOpenActions(e, params.row.id)}
         >
           <GridMoreVertIcon fontSize="small" />
         </IconButton>
@@ -279,355 +310,173 @@ export default function ManagementTable({ users }: Props) {
     },
   ];
 
-  const [filter, setFilter] = useState<"all" | "active" | "absent">("all");
-
-  const queryClient = useQueryClient();
-
-  //delete selected row
-  const [selectedRows, setSelectedRows] = useState<Array<string | number>>([]);
-
-  const [deleteMode, setDeleteMode] = useState<"bulk" | "single">("bulk");
-  const [targetUserId, setTargetUserId] = useState<string | number | null>(
-    null
-  );
-
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
-
-  const [actionsAnchorEl, setActionsAnchorEl] = useState<HTMLElement | null>(
-    null
-  );
-  const [actionsUserId, setActionsUserId] = useState<string | number | null>(
-    null
-  );
-  const actionsOpen = Boolean(actionsAnchorEl);
-
-  //Edit user status
-  const [editOpen, setEditOpen] = useState(false);
-  const [editUserId, setEditUserId] = useState<string | number | null>(null);
-
-  const openSingleConfirm = (id: string | number) => {
-    setDeleteMode("single");
-    setTargetUserId(id);
-    setConfirmOpen(true);
-  };
-
-  const handleOpenActions = (
-    e: React.MouseEvent<HTMLElement>,
-    id: string | number
-  ) => {
-    setActionsAnchorEl(e.currentTarget);
-    setActionsUserId(id);
-  };
-
-  const handleCloseActions = () => {
-    setActionsAnchorEl(null);
-    setActionsUserId(null);
-  };
-
-  const singleDeleteMutation = useMutation({
-    mutationFn: (id: string | number) => deleteUserById(id),
-    onSuccess: async () => {
-      setConfirmOpen(false);
-      handleCloseActions();
-
-      await queryClient.invalidateQueries({ queryKey: ["users"] });
-      setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 2000);
-    },
-    onError: () => alert("Delete failed. Please try again."),
-  });
-
-  const toggleStatusMutation = useMutation({
-    mutationFn: (args: { id: string | number; status: "active" | "absent" }) =>
-      updateUserStatus(args),
-
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["users"] });
-      await queryClient.invalidateQueries({
-        queryKey: ["user", actionsUserId],
-      });
-      handleCloseActions();
-    },
-
-    onError: () => {
-      alert("Failed to update status");
-    },
-  });
-
-  const handleToggleStatus = () => {
-    if (!currentUser || !actionsUserId) return;
-
-    const newStatus = currentUser.status === "active" ? "absent" : "active";
-
-    toggleStatusMutation.mutate({
-      id: actionsUserId,
-      status: newStatus,
-    });
-  };
-
-  const deleteMutation = useMutation({
-    mutationFn: (ids: Array<string | number>) => deleteMultipleUsers(ids),
-    onSuccess: async () => {
-      setConfirmOpen(false);
-      setSelectedRows([]);
-
-      await queryClient.invalidateQueries({ queryKey: ["users"] });
-      setShowAlert(true);
-      setTimeout(() => {
-        setShowAlert(false);
-      }, 2000);
-    },
-
-    onError: () => {
-      alert("Delete failed. Please try again.");
-    },
-  });
-
-  const selectedCount = selectedRows.length;
-  const isDeleting = deleteMutation.isPending || singleDeleteMutation.isPending;
-
-  const openConfirm = () => {
-    if (selectedCount === 0) return;
-    setConfirmOpen(true);
-  };
-
-  const confirmDelete = () => {
-    if (deleteMode === "bulk") {
-      deleteMutation.mutate(selectedRows);
-      return;
-    }
-    if (targetUserId != null) {
-      singleDeleteMutation.mutate(targetUserId);
-    }
-  };
-
-  const userDetailsQuery = useQuery({
-    queryKey: ["user", actionsUserId],
-    queryFn: () => getUserById(actionsUserId as string | number),
-    enabled: Boolean(actionsUserId),
-  });
-  const currentUser = userDetailsQuery.data as User | undefined;
-
-  const tableRows =
-    filter === "all"
-      ? users
-      : users.filter((u) => {
-          if (filter === "absent") return u.status !== "active";
-          return u.status === "active";
-        });
   return (
-    <Box className="m-4">
-      <Container className="container mx-auto mt-10 p-7 sm:px-6 lg:px-8 rounded-3xl border border-gray-200">
-        {showAlert && (
-          <Alert
-            severity="success"
-            icon={<GridCheckCircleIcon fontSize="inherit" />}
-            onClose={() => setShowAlert(false)}
-            sx={{ mb: 2 }}
-          >
-            Selected users deleted successfully
-          </Alert>
-        )}
-        <Box className="mx-6 p-6">
-          <>
-            <Filter
-              value={filter}
-              onChange={setFilter}
-              selectedCount={selectedCount}
-              deleteDisabled={selectedCount === 0 || isDeleting}
-              deleteLoading={isDeleting}
-              onDeleteClick={openConfirm}
-            />
+    <Container className="container mx-auto mt-10 p-7 sm:px-6 lg:px-8 rounded-3xl border border-gray-200">
+      <Box className="mx-6 p-6">
+        <Filter
+          value={filter}
+          onChange={onFilterChange}
+          selectedCount={selectedCount}
+          deleteDisabled={selectedCount === 0 || isDeleting}
+          deleteLoading={isDeleting}
+          onDeleteClick={onBulkDeleteClick}
+        />
 
-            <DataGrid
-              rows={tableRows}
-              onRowSelectionModelChange={(model) => {
-                if (Array.isArray(model)) {
-                  setSelectedRows(model as Array<string | number>);
-                  return;
-                }
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          getRowId={(row) => row.id}
+          checkboxSelection
+          slots={{ baseCheckbox: CustomCheckbox }}
+          disableRowSelectionOnClick
+          rowHeight={74}
+          columnHeaderHeight={44}
+          disableColumnMenu
+          onRowSelectionModelChange={onRowSelectionModelChange}
+          sx={{
+            border: "none",
+            "& .MuiDataGrid-cell": {
+              borderBottom: "1px solid #f1f1f1",
+              display: "flex",
+              alignItems: "center",
+              paddingTop: "12px",
+            },
+            "& .MuiDataGrid-sortButton": { display: "none" },
+            "& .MuiDataGrid-columnHeader": {
+              backgroundColor: "#F7F7F7",
+              paddingTop: "10px",
+              paddingBottom: "10px",
+              borderBottom: "none !important",
+              height: "40px",
+            },
+            "& .MuiDataGrid-columnHeaders": { overflow: "hidden" },
+            "& .MuiDataGrid-columnHeader[data-field='__check__']": {
+              borderTopLeftRadius: "12px",
+              borderBottomLeftRadius: "12px",
+            },
+            "& .MuiDataGrid-columnHeader[data-field='actions']": {
+              borderTopRightRadius: "12px",
+              borderBottomRightRadius: "12px",
+            },
+            "& .MuiDataGrid-checkboxInput .MuiSvgIcon-root": {
+              fill: "#837d7d",
+              boxShadow: "0px 2px 4px rgba(27, 28, 29, 0.12)",
+              borderRadius: "6px",
+              border: "2px solid rgba(27, 28, 29, 0.12)",
+            },
+            "& .MuiDataGrid-columnHeaderTitle": {
+              fontWeight: 500,
+              color: "#6b7280",
+              fontSize: "13px",
+              lineHeight: "1.2",
+            },
+            "& .MuiDataGrid-columnSeparator": { display: "none" },
+          }}
+        />
 
-                if (model?.type === "exclude") {
-                  setSelectedRows(tableRows.map((u) => u.id));
-                  return;
-                }
-
-                if (model?.ids instanceof Set) {
-                  setSelectedRows(
-                    Array.from(model.ids) as Array<string | number>
-                  );
-                  return;
-                }
-
-                setSelectedRows([]);
-              }}
-              columns={columns}
-              getRowId={(row) => row.id}
-              checkboxSelection
-              slots={{ baseCheckbox: CustomCheckbox }}
-              disableRowSelectionOnClick
-              rowHeight={74}
-              columnHeaderHeight={44}
-              disableColumnMenu
-              sx={{
-                border: "none",
-                "& .MuiDataGrid-cell": {
-                  borderBottom: "1px solid #f1f1f1",
-
-                  display: "flex",
-                  alignItems: "center",
-                  paddingTop: "12px",
-                },
-                "& .MuiDataGrid-sortButton": { display: "none" },
-                "& .MuiDataGrid-columnHeader": {
-                  backgroundColor: "#F7F7F7",
-                  paddingTop: "10px",
-                  paddingBottom: "10px",
-                  borderBottom: "none !important",
-                  height: "40px",
-                },
-                "& .MuiDataGrid-columnHeaders": {
-                  overflow: "hidden",
-                },
-                "& .MuiDataGrid-columnHeader[data-field='__check__']": {
-                  borderTopLeftRadius: "12px",
-                  borderBottomLeftRadius: "12px",
-                },
-
-                "& .MuiDataGrid-columnHeader[data-field='actions']": {
-                  borderTopRightRadius: "12px",
-                  borderBottomRightRadius: "12px",
-                },
-                "& .MuiDataGrid-checkboxInput .MuiSvgIcon-root": {
-                  fill: "#837d7d",
-                  boxShadow: "0px 2px 4px rgba(27, 28, 29, 0.12)",
-                  borderRadius: "6px",
-                  border: "2px solid rgba(27, 28, 29, 0.12)",
-                },
-                "& .MuiDataGrid-columnHeaderTitle": {
-                  fontWeight: 500,
-                  color: "#6b7280",
-                  fontSize: "13px",
-                  lineHeight: "1.2",
-                },
-
-                "& .MuiDataGrid-columnSeparator": {
-                  display: "none",
-                },
-              }}
-            />
-          </>
-          <Popover
-            open={actionsOpen}
-            onClose={handleCloseActions}
-            anchorEl={actionsAnchorEl}
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            transformOrigin={{ vertical: "top", horizontal: "right" }}
-          >
-            <Box sx={{ width: 320, p: 1 }}>
-              {/* Details */}
-              <Box sx={{ px: 1.5, py: 1 }}>
-                {userDetailsQuery.isLoading ? (
-                  <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                    <CircularProgress size={16} />
-                    <span style={{ color: "#6b7280" }}>
-                      Loading user details…
-                    </span>
-                  </Box>
-                ) : currentUser ? (
-                  <Box
-                    sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}
-                  >
-                    <Box sx={{ fontWeight: 600 }}>{currentUser.name}</Box>
-                    <Box sx={{ color: "#6b7280", fontSize: 13 }}>
-                      {currentUser.title}
-                    </Box>
-                    <Box sx={{ color: "#6b7280", fontSize: 13 }}>
-                      Status: <b>{currentUser.status}</b>
-                    </Box>
-                  </Box>
-                ) : (
+        <Popover
+          open={actionsOpen}
+          onClose={onCloseActions}
+          anchorEl={actionsAnchorEl}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          transformOrigin={{ vertical: "top", horizontal: "right" }}
+        >
+          <Box sx={{ width: 320, p: 1 }}>
+            <Box sx={{ px: 1.5, py: 1 }}>
+              {userDetailsLoading ? (
+                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                  <CircularProgress size={16} />
+                  <span style={{ color: "#6b7280" }}>
+                    Loading user details…
+                  </span>
+                </Box>
+              ) : currentUser ? (
+                <Box
+                  sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}
+                >
+                  <Box sx={{ fontWeight: 600 }}>{currentUser.name}</Box>
                   <Box sx={{ color: "#6b7280", fontSize: 13 }}>
-                    No user details.
+                    {currentUser.title}
                   </Box>
-                )}
-              </Box>
-
-              <Divider />
-
-              {/* Edit */}
-              <MenuItem
-                onClick={() => {
-                  if (!actionsUserId) return;
-                  setEditUserId(actionsUserId);
-                  setEditOpen(true);
-                  handleCloseActions();
-                }}
-              >
-                <ListItemIcon>
-                  <EditIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText primary="Edit User Details" />
-              </MenuItem>
-
-              {/* Toggle Status */}
-              <MenuItem
-                disabled={!currentUser || toggleStatusMutation.isPending}
-                onClick={handleToggleStatus}
-              >
-                <ListItemIcon>
-                  {currentUser?.status === "active" ? (
-                    <DoNotDisturbAltIcon fontSize="small" />
-                  ) : (
-                    <CheckCircleOutlineIcon fontSize="small" />
-                  )}
-                </ListItemIcon>
-
-                <ListItemText
-                  primary={
-                    currentUser?.status === "active"
-                      ? "Mark as Absent"
-                      : "Mark as Active"
-                  }
-                />
-              </MenuItem>
-              {toggleStatusMutation.isPending && <CircularProgress size={14} />}
-
-              <Divider />
-
-              {/* Delete single */}
-              <MenuItem
-                onClick={() => {
-                  if (!actionsUserId) return;
-                  openSingleConfirm(actionsUserId);
-                }}
-                sx={{ color: "error.main" }}
-              >
-                <ListItemIcon sx={{ color: "error.main" }}>
-                  <GridDeleteIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText primary="Delete User" />
-              </MenuItem>
+                  <Box sx={{ color: "#6b7280", fontSize: 13 }}>
+                    Status: <b>{currentUser.status}</b>
+                  </Box>
+                </Box>
+              ) : (
+                <Box sx={{ color: "#6b7280", fontSize: 13 }}>
+                  No user details.
+                </Box>
+              )}
             </Box>
-          </Popover>
-          <ConfirmDeleteDialog
-            open={confirmOpen}
-            count={selectedCount}
-            loading={isDeleting}
-            onClose={() => setConfirmOpen(false)}
-            onConfirm={confirmDelete}
-          />
-          <EditUserDialog
-            open={editOpen}
-            userId={editUserId}
-            onClose={() => {
-              setEditOpen(false);
-              setEditUserId(null);
-            }}
-          />
-        </Box>
-      </Container>
-    </Box>
+
+            <Divider />
+
+            <MenuItem
+              onClick={() => {
+                if (!currentUser) return;
+                onOpenEdit(currentUser.id);
+                onCloseActions();
+              }}
+            >
+              <ListItemIcon>
+                <EditIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText primary="Edit User Details" />
+            </MenuItem>
+
+            <MenuItem
+              disabled={!currentUser || togglingStatus}
+              onClick={onToggleStatus}
+            >
+              <ListItemIcon>
+                {currentUser?.status === "active" ? (
+                  <DoNotDisturbAltIcon fontSize="small" />
+                ) : (
+                  <CheckCircleOutlineIcon fontSize="small" />
+                )}
+              </ListItemIcon>
+              <ListItemText
+                primary={
+                  currentUser?.status === "active"
+                    ? "Mark as Absent"
+                    : "Mark as Active"
+                }
+              />
+              {togglingStatus && <CircularProgress size={14} />}
+            </MenuItem>
+
+            <Divider />
+
+            <MenuItem
+              onClick={() => {
+                if (!currentUser) return;
+                onOpenSingleDeleteConfirm(currentUser.id);
+                onCloseActions();
+              }}
+              sx={{ color: "error.main" }}
+            >
+              <ListItemIcon sx={{ color: "error.main" }}>
+                <GridDeleteIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText primary="Delete User" />
+            </MenuItem>
+          </Box>
+        </Popover>
+
+        <ConfirmDeleteDialog
+          open={confirmOpen}
+          count={selectedCount}
+          loading={isDeleting}
+          onClose={onCloseConfirm}
+          onConfirm={onConfirmDelete}
+        />
+
+        <EditUserDialog
+          open={editOpen}
+          userId={editUserId}
+          onClose={onCloseEdit}
+        />
+      </Box>
+    </Container>
   );
 }
