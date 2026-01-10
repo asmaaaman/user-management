@@ -5,12 +5,24 @@ type FilterValue = "all" | "active" | "absent";
 type Props = {
   value: FilterValue;
   onChange: (value: FilterValue) => void;
+
+  selectedCount: number;
+  deleteDisabled: boolean;
+  deleteLoading: boolean;
+  onDeleteClick: () => void;
 };
 
 const tabBase =
   "px-6 py-2 rounded-md text-sm cursor-pointer select-none transition";
 
-const Filter = ({ value, onChange }: Props) => {
+export default function Filter({
+  value,
+  onChange,
+  selectedCount,
+  deleteDisabled,
+  deleteLoading,
+  onDeleteClick,
+}: Props) {
   const tabClass = (v: FilterValue) =>
     `${tabBase} ${
       value === v
@@ -19,8 +31,8 @@ const Filter = ({ value, onChange }: Props) => {
     }`;
 
   return (
-    <Box className="flex align-items-center justify-between">
-      <Box className="mb-4 p-2 bg-[#F7F7F7] rounded-lg w-[35%] flex flex-row gap-2 items-center">
+    <Box className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <Box className="mb-4 p-0 sm:p-2 bg-[#F7F7F7] rounded-lg w-full sm:w-[35%] flex gap-1 items-center">
         <button className={tabClass("all")} onClick={() => onChange("all")}>
           All
         </button>
@@ -39,19 +51,15 @@ const Filter = ({ value, onChange }: Props) => {
           Absent
         </button>
       </Box>
-      <Box>
-        <Button
-          size="large"
-          sx={{
-            backgroundColor: "#F7F7F7",
-            color: "#ddd",
-          }}
-        >
-          Delete Selected
-        </Button>
-      </Box>
+
+      <Button
+        onClick={onDeleteClick}
+        disabled={deleteDisabled}
+        color="error"
+        variant="contained"
+      >
+        {deleteLoading ? "Deleting..." : `Delete Selected (${selectedCount})`}
+      </Button>
     </Box>
   );
-};
-
-export default Filter;
+}

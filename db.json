@@ -1,37 +1,7 @@
 {
   "users": [
-    {
-      "id": 1,
-      "name": "James Brown",
-      "email": "james@alignui.com",
-      "avatarUrl": "https://i.pravatar.cc/120?img=12",
-      "title": "Marketing Manager",
-      "since": "2021-08-01",
-      "project": {
-        "name": "Monday.com",
-        "logoUrl": "https://logo.clearbit.com/monday.com",
-        "subtitle": "Campaign Strategy Brainstorm…"
-      },
-      "documents": [{ "id": 101, "name": "brown-james.pdf", "sizeMB": 2.4, "type": "pdf" }],
-      "status": "active"
-    },
-    {
-      "id": 2,
-      "name": "Sophia Williams",
-      "email": "sophia@alignui.com",
-      "avatarUrl": "https://i.pravatar.cc/120?img=32",
-      "title": "HR Assistant",
-      "since": "2021-08-01",
-      "project": {
-        "name": "Notion",
-        "logoUrl": "https://logo.clearbit.com/notion.so",
-        "subtitle": "Employee Engagement Survey"
-      },
-      "documents": [{ "id": 102, "name": "williams-sophia.pdf", "sizeMB": 2.4, "type": "pdf" }],
-      "status": "active"
-    },
-    {
-      "id": 3,
+        {
+      "id": "1",
       "name": "Arthur Taylor",
       "email": "arthur@alignui.com",
       "avatarUrl": "https://i.pravatar.cc/120?img=22",
@@ -42,11 +12,62 @@
         "logoUrl": "https://logo.clearbit.com/spotify.com",
         "subtitle": "Vision and Goal Setting Session"
       },
-      "documents": [{ "id": 103, "name": "taylor-arthur.pdf", "sizeMB": 2.4, "type": "pdf" }],
+      "documents": [
+        {
+          "id": 103,
+          "name": "taylor-arthur.pdf",
+          "sizeMB": 2.4,
+          "type": "pdf"
+        }
+      ],
+      "status": "absent"
+    },
+        {
+      "id": "2",
+      "name": "Arthur Taylor",
+      "email": "arthur@alignui.com",
+      "avatarUrl": "https://i.pravatar.cc/120?img=22",
+      "title": "Entrepreneur / CEO",
+      "since": "2021-08-01",
+      "project": {
+        "name": "Spotify",
+        "logoUrl": "https://logo.clearbit.com/spotify.com",
+        "subtitle": "Vision and Goal Setting Session"
+      },
+      "documents": [
+        {
+          "id": 103,
+          "name": "taylor-arthur.pdf",
+          "sizeMB": 2.4,
+          "type": "pdf"
+        }
+      ],
       "status": "absent"
     },
     {
-      "id": 4,
+      "id": "3",
+      "name": "Arthur Taylor",
+      "email": "arthur@alignui.com",
+      "avatarUrl": "https://i.pravatar.cc/120?img=22",
+      "title": "Entrepreneur / CEO",
+      "since": "2021-08-01",
+      "project": {
+        "name": "Spotify",
+        "logoUrl": "https://logo.clearbit.com/spotify.com",
+        "subtitle": "Vision and Goal Setting Session"
+      },
+      "documents": [
+        {
+          "id": 103,
+          "name": "taylor-arthur.pdf",
+          "sizeMB": 2.4,
+          "type": "pdf"
+        }
+      ],
+      "status": "absent"
+    },
+    {
+      "id": "4",
       "name": "Emma Wright",
       "email": "emma@alignui.com",
       "avatarUrl": "https://i.pravatar.cc/120?img=47",
@@ -57,11 +78,19 @@
         "logoUrl": "https://logo.clearbit.com/formcarry.com",
         "subtitle": "User Feedback Analysis"
       },
-      "documents": [{ "id": 104, "name": "wright-emma.pdf", "sizeMB": 1.9, "type": "pdf" }],
+      "documents": [
+        {
+          "id": 104,
+          "name": "wright-emma.pdf",
+          "iconUrl": "https://cdn-icons-png.flaticon.com/512/337/337946.png",
+          "sizeMB": 1.9,
+          "type": "pdf"
+        }
+      ],
       "status": "active"
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "Matthew Johnson",
       "email": "matthew@alignui.com",
       "avatarUrl": "https://i.pravatar.cc/120?img=56",
@@ -72,11 +101,18 @@
         "logoUrl": "https://logo.clearbit.com/loom.com",
         "subtitle": "Data Analysis Methodology Di…"
       },
-      "documents": [{ "id": 105, "name": "johnson-matthew.pdf", "sizeMB": 2.9, "type": "pdf" }],
+      "documents": [
+        {
+          "id": 105,
+          "name": "johnson-matthew.pdf",
+          "sizeMB": 2.9,
+          "type": "pdf"
+        }
+      ],
       "status": "absent"
     },
     {
-      "id": 6,
+      "id": "6",
       "name": "Laura Perez",
       "email": "laura@alignui.com",
       "avatarUrl": "https://i.pravatar.cc/120?img=68",
@@ -87,11 +123,18 @@
         "logoUrl": "https://logo.clearbit.com/tidal.com",
         "subtitle": "Design Trends and Inspiration…"
       },
-      "documents": [{ "id": 106, "name": "perez-laura.pdf", "sizeMB": 2.5, "type": "pdf" }],
+      "documents": [
+        {
+          "id": 106,
+          "name": "perez-laura.pdf",
+          "sizeMB": 2.5,
+          "type": "pdf"
+        }
+      ],
       "status": "absent"
     },
     {
-      "id": 7,
+      "id": "7",
       "name": "Wei Chen",
       "email": "wei@alignui.com",
       "avatarUrl": "https://i.pravatar.cc/120?img=15",
@@ -102,7 +145,14 @@
         "logoUrl": "https://logo.clearbit.com/dropbox.com",
         "subtitle": "Process Optimization Brainsto…"
       },
-      "documents": [{ "id": 107, "name": "chen-wei.pdf", "sizeMB": 2.6, "type": "pdf" }],
+      "documents": [
+        {
+          "id": 107,
+          "name": "chen-wei.pdf",
+          "sizeMB": 2.6,
+          "type": "pdf"
+        }
+      ],
       "status": "active"
     }
   ]

@@ -11,6 +11,7 @@ export type DocumentType = "pdf" | "doc" | "image";
 export interface Document {
   id: number;
   name: string;
+  iconUrl: string;
   sizeMB: number;
   type: DocumentType;
 }
