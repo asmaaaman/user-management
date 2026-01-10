@@ -1,6 +1,6 @@
 {
   "users": [
-        {
+    {
       "id": "1",
       "name": "Arthur Taylor",
       "email": "arthur@alignui.com",
@@ -20,9 +20,9 @@
           "type": "pdf"
         }
       ],
-      "status": "absent"
+      "status": "active"
     },
-        {
+    {
       "id": "2",
       "name": "Arthur Taylor",
       "email": "arthur@alignui.com",
